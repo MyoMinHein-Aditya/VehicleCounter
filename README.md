@@ -1,34 +1,70 @@
-# Vehicle Counter
+# Vehicle Detection and Counting System
 
-A web application that detects, counts, and highlights cars and motorcycles in dense images using a YOLOv8 machine learning model.
+A robust, image-based vehicle detection architecture that processes multiple image formats, detects cars and motorcycles using YOLOv8, and returns class-wise counts with an annotated bounding-box image.
 
-### Features
-* Upload images through a clean web interface.
-* Utilizes the YOLOv8 Medium model for high accuracy.
-* Specifically optimized to handle dense traffic and overlapping vehicles.
-* Filters detections strictly for cars and motorcycles.
-* Returns exact counts and an annotated image with bounding boxes.
+### Problem
+Monolithic detection scripts mix API routing, image processing, model inference, and counting logic, making them difficult to evaluate, scale, or maintain.
+
+### Objective
+To build a production-ready, modular computer vision pipeline with strict separation of concerns between the API layer, preprocessing, detection, counting, and utilities.
+
+### Architecture
+
+             IMAGE
+               |
+        PREPROCESSING
+               |
+          YOLO MODEL
+               |
+       +-------+-------+
+       |               |
+      CAR         MOTORCYCLE
+       |               |
+       +-------+-------+
+               |
+         COUNT + BOXES
+               |
+          FINAL IMAGE
+
+### Model Details
+* Base Model: YOLOv8 Medium (yolov8m.pt)
+* Target Classes: Car (2), Motorcycle (3)
+* Confidence Threshold: 0.30 (Tuned for density)
+* NMS IoU Threshold: 0.65
+* Inference Image Size: 1024
+
+### Supported Formats
+* JPEG / JPG
+* PNG
+* WEBP
+* BMP
+* TIFF
 
 ### Prerequisites
-* Python 3.8 or higher.
-* A modern web browser.
+* Python 3.14.2
+* pip or uv package manager
 
 ### Installation
-* Clone or download this project folder to your local machine.
-* Open your terminal and navigate to the project folder.
-* Create a virtual environment using `python -m venv venv`.
-* Activate the virtual environment:
-  * Windows: `venv\Scripts\activate`
-  * Mac/Linux: `source venv/bin/activate`
-* Install the required dependencies using `pip install -r requirements.txt`.
+1. Clone this repository.
+2. Create and activate a virtual environment.
+3. Install dependencies using `pip install -r requirements.txt`.
+4. Ensure `models/yolov8m.pt` is downloaded (the script will auto-download on first run if missing).
 
 ### Usage
-* Start the backend server by running `python app.py` in your terminal.
-* Wait for the server to start (it will run on `http://localhost:5000`).
-* Open the `index.html` file directly in your web browser.
-* Upload an image of a parking lot and click "Analyze Image".
+1. Open a terminal in the project root.
+2. Run `python backend/app.py`.
+3. Open `frontend/index.html` in your web browser.
+4. Upload an image to view the extracted counts and bounding boxes.
 
-### Project Structure
-* `app.py`: The Flask backend API that handles image processing and YOLOv8 inference.
-* `index.html`: The frontend user interface for uploading images and displaying results.
-* `requirements.txt`: The list of Python dependencies required to run the project.
+### Evaluation Metrics
+* Precision, Recall, and mAP@50 metrics are calculated via the testing suite.
+* Run `pytest tests/` to execute image validation, detection response, and counting logic tests.
+
+### Limitations
+* Extremely dense occlusion may still merge distant vehicles.
+* High-angle, bird's-eye view cameras might require a custom-trained model or SAHI integration.
+
+### Future Improvements
+* Integrate SAHI for high-density slicing.
+* Fine-tune the model specifically on the India Driving Dataset (IDD).
+* Add a database layer to track counts over time.

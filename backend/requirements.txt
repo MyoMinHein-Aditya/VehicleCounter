@@ -1,0 +1,6 @@
+Flask
+Flask-Cors
+ultralytics
+opencv-python-headless
+Pillow
+numpy

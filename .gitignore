@@ -1,25 +1,14 @@
-# Virtual Environments
 venv/
 env/
-.venv/
-
-# Python Cache Files
+.env
 __pycache__/
 *.py[cod]
 *$py.class
-
-# YOLOv8 & Ultralytics
-*.pt
+.pytest_cache/
+models/*.pt
 runs/
-yolov8m.pt
-
-# OS Generated Files
 .DS_Store
 Thumbs.db
-
-# IDE Files
 .vscode/
 .idea/
-
-# Environment Variables
-.env
+yolov8m.pt
