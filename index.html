@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Vehicle Counter</title>
+    <style>
+        body { 
+            font-family: sans-serif; 
+            text-align: center; 
+            margin-top: 50px; 
+            background-color: #f4f4f9;
+        }
+        .container { 
+            max-width: 800px; 
+            margin: auto; 
+            padding: 30px; 
+            background: white; 
+            border: 1px solid #ddd; 
+            border-radius: 8px; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        input[type="file"] {
+            margin: 15px 0;
+        }
+        button { 
+            padding: 10px 20px; 
+            cursor: pointer; 
+            background: #28a745; 
+            color: white; 
+            border: none; 
+            border-radius: 4px; 
+            font-size: 16px;
+        }
+        button:hover { 
+            background: #218838; 
+        }
+        .result { 
+            margin-top: 25px; 
+            margin-bottom: 25px;
+            font-weight: bold; 
+            font-size: 1.2em; 
+            color: #333; 
+            line-height: 1.8; 
+            text-align: left;
+            padding-left: 20px;
+        }
+        .image-wrapper {
+            width: 100%;
+            height: 400px;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            border: 1px solid #eee;
+            border-radius: 4px;
+            background-color: #fafafa;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+        #resultImage {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Upload Parking Photo</h2>
+    <input type="file" id="imageInput" accept="image/*">
+    <br>
+    <button onclick="countVehicles()">Analyze Image</button>
+    <div id="result" class="result"></div>
+    <div class="image-wrapper" id="imageWrapper">
+        <img id="resultImage" alt="Analyzed Parking Lot">
+    </div>
+</div>
+
+<script>
+    async function countVehicles() {
+        const fileInput = document.getElementById('imageInput');
+        const resultDiv = document.getElementById('result');
+        const resultImg = document.getElementById('resultImage');
+        const imageWrapper = document.getElementById('imageWrapper');
+
+        if (!fileInput.files[0]) {
+            resultDiv.innerText = "Please select an image.";
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('image', fileInput.files[0]);
+
+        resultDiv.innerText = "Processing image...";
+        imageWrapper.style.display = "none";
+
+        try {
+            const response = await fetch('http://localhost:5000/count', {
+                method: 'POST',
+                body: formData
+            });
+            
+            const data = await response.json();
+            
+            if (data.error) throw new Error(data.error);
+
+            resultDiv.innerHTML = `
+                Total Vehicles: ${data.total} <br>
+                Cars: ${data.cars} <br>
+                Motorcycles: ${data.motorcycles}
+            `;
+            
+            resultImg.src = "data:image/jpeg;base64," + data.image;
+            imageWrapper.style.display = "flex";
+
+        } catch (error) {
+            resultDiv.innerText = "Error analyzing image. Ensure the Python server is running.";
+        }
+    }
+</script>
+</body>
+</html>
