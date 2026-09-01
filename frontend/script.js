@@ -28,6 +28,7 @@ async function detectVehicles() {
 
         document.getElementById('carCount').innerText = data.counts.cars;
         document.getElementById('motoCount').innerText = data.counts.motorcycles;
+        document.getElementById('heavyCount').innerText = data.counts.heavy_vehicles;
         document.getElementById('totalCount').innerText = data.counts.total;
         
         document.getElementById('resultImage').src = "data:image/jpeg;base64," + data.image;

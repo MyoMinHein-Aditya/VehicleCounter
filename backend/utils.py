@@ -8,7 +8,7 @@ def draw_boxes(img, detections):
         x1, y1, x2, y2 = det["bbox"]
         label = f"{det['class'].capitalize()} {det['confidence']:.2f}"
         
-        color = (0, 255, 0) if det["class"] == "car" else (255, 165, 0)
+        color = (0, 255, 0) if det["class"] == "car" else (255, 165, 0) if det["class"] == "motorcycle" else (0, 0, 255)
         
         cv2.rectangle(annotated_img, (x1, y1), (x2, y2), color, 2)
         
